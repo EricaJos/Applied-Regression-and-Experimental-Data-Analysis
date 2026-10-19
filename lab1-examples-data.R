@@ -10,7 +10,7 @@ mydata=read.csv("binary.csv", header=T)
 dim(mydata); head(mydata); tail(mydata)
 
 #view the data
-View(mydata)
+#View(mydata)
 
 # In this data there are 4 columns, which are admit, gre, gpa, rank
 # set x is the admit and y is gre
