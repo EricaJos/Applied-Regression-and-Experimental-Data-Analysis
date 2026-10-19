@@ -1,0 +1,13 @@
+{
+    "name": "RStudio Environment",
+    "image": "rocker/rstudio:latest",
+    "forwardPorts": [8787],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "REditorSupport.r",
+                "quarto.quarto"
+            ]
+        }
+    }
+}
