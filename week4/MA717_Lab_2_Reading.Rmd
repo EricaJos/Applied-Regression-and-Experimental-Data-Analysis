@@ -1,0 +1,226 @@
+---
+title: 'MA717: Applied Regression and Experimental Data Analysis'
+author: "R Lab2 -- Linear regression and diagnostics"
+date: "Dr Wenxing Guo (wg22745@essex.ac.uk)"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+\textbf{Target}: in this lab session, we are going to learn how to do linear regression in R and how to check the result of fitting. 
+
+***Reference book***: An introduction to Statistical learning with applications in R, Gareth James Daniela Witten Trevor Hastie and Robert Tibshirani. Springer, second edition 2021. 
+  
+\textbf{Part I: linear regression and R commands}
+
+The (multiple) linear regression model can be expressed as following:
+$$Y=\beta_0+\beta_1X_1+\beta_2X_2+...+\beta_pX_p+\epsilon, \; \; \; \; (1)$$
+where $Y$ is the outcome and $X_1, X_2, ..., X_p$ are $p$ predictors (covariates, features, exploratory variables) and $\epsilon$ is the random error with $E(\epsilon)=0, var(\epsilon)=\sigma^2<\infty$.  Sometimes we will further assume that $\epsilon$ follows a normal distribution with mean $0$ and variance $\sigma^2$, denoted as $\epsilon\sim N(0,\sigma^2)$. If $p$ is 1, i.e. there is only one predictor, we call (1) as simple linear regression. 
+
+In real world, we collect observations of outcome and predictors and we normally use lower letter to denote the observations as $y_i$ and $x_{i1}, x_{i2}, ..., x_{ip}$ for the $i$th sample, $i=1, 2, ..., n$. That is, the sample size is $n$ and we have $p$ predictors and we assume that these n samples are independent to each other. 
+
+The main R functions used in this lab are: 
+
+1. lm() -- performs linear regression. 
+2. summary() -- gives basic statistics or summary the fitting results of linear regression model. If summary() is used for a matrix, it will give the summary information about the variables (columns), such as minimum, maximum, mean, median etc for continuous variable or cross-tab for categorical data. If NA is used in the data to represent missing, summary() will also give the number of missing. If summary() is used for a fitting result, it will output the fitting table and other information that given by the fitting function. 
+3. plot() and abline() -- plot() gives the scatter plot of two variable and abline() can add a fitted line from linear model to the plot. If plot() is applied to linear regression result, it will give four diagnostic plots after linear fitting. 
+4. pairs() and cor() -- paris() gives paired plots of multiple variables and cor() calculates the paired linear correlation of variables. 
+5. vif() -- calculates the variance inflation factor. 
+6. par() -- sets graphical parameters. 
+7. predict() -- gives prediction for new observation. 
+8. confint() -- gives the confidence interval of coefficient. 
+9. anova() -- calculate ANOVA tables, it can be used to test if one model is good than another model, given one model use the subset predictors of another model's predictor. 
+
+\newpage
+
+\textbf{Example 2.1: simple linear regression -- product sales with TV advertising budge in Advertising example}
+
+In this example, we look at the relationship between produce sales (Y) with TV advertising budge (X) in a data called ***Advertising*** given in the reference book. This data consists 200 observations of four variables: 
+
+(1) outcome--produce ***sales*** 
+(2) predictor 1 -- ***TV*** advertising budge
+(3) predictor 2 -- ***radio*** advertising budge
+(4) predictor 3 -- ***newpapaer*** advertising budge 
+
+We will use lm() to do simple linear regression of ***sales*** with ***TV*** and use summary() to output the result. 
+# set up working directory
+# setwd("D:/MA717/lab2") # e.g. M:/Documents/MA717/lab1
+```{r, eval=TRUE}
+
+# set up working directory
+
+# read the data 
+mydata=read.csv("Advertising.csv", header=T)
+head(mydata)
+
+# summary the data
+summary(mydata)
+
+# use linear regression to fit the data and summary the output
+myfit.simple<-lm(sales~TV, data=mydata)
+summary(myfit.simple)
+anova(myfit.simple)
+```
+
+From the summary result of the fitting, you can see the a table of coefficients. There are five columns:
+
+1. the first column is the name of the parameters, by default, the first parameter will be $\beta_0$, i.e. Intercept
+2. the second column is the estimate value of the parameters.
+3. the third column is the standard error of parameters. 
+4. the four column is z or t-value, which is equal to estimate/standard error. This is a statistics that used for test if ***Null hypothesis: parameter=0*** is true or not. If Null hypothesis is true, we would expect this statistics is small. 
+5. the last column is Pr(>|t|) (or Pr(>|z|) when z value is used), this is the probability of parameter=0 (Null hypothesis is correct). The smaller of this p-value, the less likely the parameter is zero. If the p-value is smaller than the significance level $\alpha$ (normally =0.05), we reject Null hypothesis under this significance level.   
+
+In this example, both intercept and TV have associated p-value<0.05, we would say that they are statistical significantly NOT zero (sometime short as they are significant). 
+
+In R output below the coefficient table, you can find the ***residual standard deviation***, which is an estimator of $\sigma$. 
+
+Below that you can see ***R-squared*** (mathematically $R^2$). It indicates the proportion of total variability of $Y$ that explained by including the predictor $X$ in the regression model. So if the predictor(s) $X$ can 100\% explain the variability of $Y$, you will have $R^2=1$. If $X$ cannot explain the variability of $Y$ at all, you will have $R^2=0$. We normally expect $R^2$ is a value between 0 and 1. The higher $R^2$, the stronger ***linear*** relation between $X$ and $Y$. There are two types of $R^2$:
+
+-- ***multiple R-squared*** is the $R^2$ you learned from the lecture.
+$$R^2=\frac{TSS-RSS}{TSS},$$
+where $TSS=\sum_{i} (y_i-\bar{y})^2$ is the *total sum of squares* (in lecture, also denoted as $SS_T$ or $SS_{yy}$), and $RSS=\sum_{i} (y_i-\hat{y}_i)^2$ is *residual sum of squares* (in lecture, also denote as $SS_R$). $R^2$ tends to be larger when more predictors included even if new variable improves $R^2$ very little and we call this as a over-fitting problem. 
+
+-- ***adjusted R-squared*** is adjusted by the number of sample size and number of predictors to overcome over-fitting problem of $R^2$. In practice, adjusted R-squared is preferred.  
+$$Adjusted \; R^2=1-\frac{RSS/(n-p-1)}{TSS/(n-1)}=\frac{TSS/(n-1)-RSS/(n-p-1)}{TSS/(n-1)}$$
+
+In this example, ***TV*** explains about 61\% of the variability of ***sales***.
+
+You can also find ***F statistics*** and the related p-value. This F-statistics is to test if Null hypothesis is true or not where 
+
+***Null hypothesis: Fitting model is the same as Null model***
+
+where Null model has no $X$ but only intercept. 
+
+If the p-value for this test is smaller than the significance level $\alpha$ (normally 0.05), we reject Null hypothesis and say that fitting model is better than null model which is the case in this example.
+
+The F-statistics and p-value are actually from ANOVA table and we can use anova() command to see this. 
+
+We can also use plot() and abline() to show the data and the fitting results.  
+
+```{r, eval=TRUE}
+par(mfrow=c(1, 2)) #plot 2 plots in a 1 by 2 format
+
+# plot sales and TV
+plot(mydata$TV, mydata$sales, main="Sales vs TV")
+
+# plot sales and TV and the fitting line
+plot(mydata$TV, mydata$sales, main=c("Sales vs TV","and the linear fitting line"))
+abline(myfit.simple, col="blue")
+```
+
+
+\newpage
+\textbf{Example 2.2: multiple linear regression -- product sales with several budges in Advertising example}
+
+```{r, eval=TRUE}
+# show paired plots of outcome and predictions and check the correlation among them.
+pairs(mydata)
+cor(mydata)
+
+
+# use linear regression to fit the data and summary the output
+myfit.full<-lm(sales~., data=mydata) 
+# . here represent all variable except sales in my data.  
+# It equivalent to the following commend
+# myfit.full<-lm(sales~TV+radio+newspaper, data=mydata)
+
+# summarize linear regression fit
+summary(myfit.full)
+
+# get confidence interval for the coefficient estimates
+confint(myfit.full)
+
+# give prediction value and prediction interval based on 
+#    new data (TV=10, radio=10, newspaper=10)
+# data.frame() used below defines a new data structure with 
+#    three variables TV, radio, newspaper. 
+predict(myfit.full, newdata=data.frame(TV=10, radio=10, newspaper=10), 
+        interval="prediction")
+
+```
+
+Now the results are for more than one predictors and you can judge the significance of parameter by looking at the p-value at the last column of coefficient table for each individual parameter. If we set significance level is 0.05, we can see that **newspaper** is not significant but **TV** and **radio** are significant. 
+
+And the $R^2$ and F-statistics is again the overall evaluation when all predictors used. $R^2$ is the proportion of total variability of $Y$ that explained by including multiple predictors $X_1, X_2, \cdots, X_p$ in the regression model. And the F-statistics check if the fitted model (include all $X_1, X_2, \cdots, X_p$) is better than the null model. In this example, $R^2$ is about 0.9 shows that all three predictors together explain 90\% of the variability of sales, which is much higher than $R^2$ in simple linear model. And p-value of F test is smaller than 0.05, so the fitted model is better than null model.
+
+We can also use confind() to give the confidence interval of the parameters. We can also use predict() to predict the response value for new set of predictors values. 
+
+Since **newspaper** is not significant, we can do a linear regression without using **newspaper**, we call this model as final model. We can use ANOVA to formally test three models (simple, full, final) as following:
+
+```{r, eval=TRUE}
+# use linear regression to fit the data and summary the output
+myfit.final<-lm(sales~TV+radio, data=mydata) 
+summary(myfit.final)
+
+# anova for simple and full model
+anova(myfit.simple, myfit.full)
+
+# anova for simple and final
+anova(myfit.simple, myfit.final)
+
+# anova for full and final
+anova(myfit.final, myfit.full)
+```
+The final model only use **TV** and **radio** as predictors and they combined together can explain 90\% of variance, as good as full model but with less parameters. And we can see from ANOVA test results, simple model is significantly different from full model or final model (both Pr(>F) <2.2e-16<0.05), but there is no significant difference between full model and final model (Pr(>F)=0.8599>0.05). 
+
+**Note, ANOVA test should only be used for nested model comparison (one model use the subset predictors of another model's)**
+
+We will see other model (variable) selection methods in lab 4.  
+
+
+\newpage 
+
+\textbf{Part II: Diagnostics of linear regression fitting}
+In practice, the linear regression model may not fit the data best, there are some problems commonly seen:
+
+1. The response-predictor relationship is ***NOT linear***. 
+2. There are ***outliers*** (unusual values for response $Y$, could be a wrong observation). 
+3. The error term is ***NOT Normally distributed***. 
+4. The variance of error terms is ***NOT a constant***.  
+5. There are ***high-leverage points*** (unusual values for predictor(s) $X$, has high impact on y).  
+6. The predictors are ***linearly dependent (collinearity)***. 
+
+To identify those problems, we can use some plots or functions to check if there exist problems after fitting linear regression model to a certain data set. 
+
+1. ***residual plot*** can be used to check if there is non-linearity relationship. Ideally, residual plot should be a scatter plot where residuals are spread randomly around zero. The red line in the plot is a smoothing fitting line and can be a curve to indicate non-linearity.  
+2. ***residual plot*** can be also used to check if there are outliers. If the residual plot shows variations or some extreme points outside the majority points, it indicates problem 2 or 3. 
+3. ***Scale-location plot*** can be used to check if variance of error terms is a constant or not. If the red line on the plot is roughly horizontal across the plot, we say that the data satisfy ***homoscedasticity*** assumption (constant variance).  
+4. ***Q-Q plot*** can be used to evaluate how ***Normal*** the residuals would be. If the residuals follow a Normal distribution, the points should be in line with diagonal line. 
+5. ***Leverage plot*** can be used to judge if there are high leverage observations. If a point is far away the bulk of the data in the right side of the plot (i.e. the cook's distance is large for these points), we will consider it as high leverage observations. 
+6. ***Variance Inflation Factor (VIF)*** function or ***correlation*** can be used to judge if there are high linear dependence among predictors. 
+
+\newpage
+\textbf{Example 2.3: Diagnostics of fitting with Advertising example}
+```{r, eval=TRUE}
+
+# make four diagnostic plots after fitting
+plot(myfit.final) 
+
+# We can also calculate leverage statistics to identify the high leverage observations. 
+leverage <- hatvalues(myfit.final)
+plot(leverage)
+
+#output the index of the observation with largest leverage statistics
+which.max(leverage) 
+#order leverage statistics from largest to smallest and output the index of the first ten
+order(leverage, decreasing=T) 
+
+# calculate vif score, any variable with vif > 5 (sometime 10) indicating high linear dependency 
+library(car)
+library(carData)
+vif(myfit.full)
+
+# calculate correlation 
+cor(mydata)
+
+```
+
+Look at the four diagnostic plots, we can see:
+(1) there are potential non-linear relationship between outcome and predictors (residual plot). 
+(2) there are some high influence points (leverage plot) and we can further use hatvalues() to find out the leverage score and order them to find out the observation with highest score. 
+(3) The residuals are not fully normal (QQ plot). 
+(4) VIF scores for three predictors are all smaller (less than 5) and the correlation between predictors are low (<0.5). 
+
+We will see in next lab, some extensions to improve the model fitting in practice. 
