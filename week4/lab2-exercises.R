@@ -41,9 +41,9 @@ summary(myfit.final)
 #(use 0.05 significant level)
 
 # Use lm() and summary() to do multiple linear regression model
-myfit2.final<-lm(medv~crim, data=data.frame(TV=10, radio=10, newspaper=10))
+myfit2.final<-lm(medv~ .,crim, data=mydata)
 summary(myfit2.final)
-summary(myfit2.final)
+
 
 #Q5. Plot the four diagnostics for simple linear regression in Q3 and multiple linear regression in Q4 and
 #report your findings.
