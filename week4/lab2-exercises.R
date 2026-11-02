@@ -21,7 +21,7 @@ head(mydata)
 #variables. Report which predictor has the highest linear correlation with medv (Note, use absolute value of
 #the correlation to determine this). Is this correlation a positive or negative correlation?
 
-png("week4/lab2-examples-graphs.png", width=1800, height=1200, res=150)
+png("week4/lab2-Q2graphs.png", width=1800, height=1200, res=150)
 # use pairs() and cor()
 pairs(mydata[c("crim", "rm", "lstat", "medv")]) #text.panel = NULL
 cor(mydata)
@@ -47,6 +47,7 @@ summary(myfit2.final)
 
 #Q5. Plot the four diagnostics for simple linear regression in Q3 and multiple linear regression in Q4 and
 #report your findings.
+png("week4/lab2-Q5graphs.png", width=1800, height=1200, res=150)
 
 # Diagnostic plots for simple linear regression model
 # Diagnostic plots for multiple linear regression model
