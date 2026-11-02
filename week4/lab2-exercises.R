@@ -31,6 +31,8 @@ cor(mydata)
 #medv or not (use 0.05 significant level). Explain how you get this conclusion.
 
 # use lm() and summary() to do simple linear regression model
+myfit.final<-lm(medv~crim, data=mydata)
+summary(myfit.final)
 
 #Q4. Use medv as response, all other variables in Boston data as predictors, conduct a multiple linear
 #regression. Report which predictor(s) is(are) significant variable(s). Use adjust R2 of this model and simple
@@ -39,6 +41,9 @@ cor(mydata)
 #(use 0.05 significant level)
 
 # Use lm() and summary() to do multiple linear regression model
+myfit2.final<-lm(medv~crim, data=data.frame(TV=10, radio=10, newspaper=10))
+summary(myfit2.final)
+summary(myfit2.final)
 
 #Q5. Plot the four diagnostics for simple linear regression in Q3 and multiple linear regression in Q4 and
 #report your findings.

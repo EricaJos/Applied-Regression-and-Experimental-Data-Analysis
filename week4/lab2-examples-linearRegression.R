@@ -14,17 +14,17 @@ summary(myfit.simple)
 
 anova(myfit.simple)
 
-#showpairedplotsofoutcomeandpredictionsandcheckthecorrelationamongthem.
+#show paired plots of outcome and predictions and check the correlation among them.
 pairs(mydata)
 
 cor(mydata)
 
-#uselinearregressiontofitthedataandsummarytheoutput
+#use linear regression to fit the data and summary the output
 myfit.full<-lm(sales~.,data=mydata)
-#.hererepresentallvariableexceptsalesinmydata.
-#Itequivalenttothefollowingcommend
+#.here represent all variable except sales in my data.
+#It equivalent to the following commend
 #myfit.full<-lm(sales~TV+radio+newspaper,data=mydata)
-#summarizelinearregressionfit
+#summarize linear regression fit
 summary(myfit.full)
 
 # get confidence interval for the coefficient estimates
@@ -53,10 +53,10 @@ anova(myfit.simple, myfit.final)
 anova(myfit.final, myfit.full)
 
 
-#makefourdiagnosticplotsafterfitting
+#make four diagnostic plots after fitting
 plot(myfit.final)
 
-#Wecanalsocalculateleveragestatisticstoidentifythehighleverageobservations.
+#We can also calculate leverage statistics to identify the high leverage observations.
 leverage<-hatvalues(myfit.final)
 plot(leverage)
 
