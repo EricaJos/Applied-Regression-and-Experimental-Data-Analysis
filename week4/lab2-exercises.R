@@ -1,3 +1,5 @@
+#to run: Rscript week4/lab2-exercises.R
+
 #Q1. Read the data “Boston.csv” into R and use dim() to report the sample size and number of variables.
 #Use head() to check the first 6 lines of the data and report the variable names. Use summary() to look at
 #the summary statistics of the variable. Please note from descriptions of predictors, “chas” is a 0-1
@@ -7,15 +9,22 @@
 
 
 #set up working directory
+getwd()
 #Read the data
+mydata=read.csv("Boston.csv", header=T)
 # use dim(), head()
+dim(mydata)
+head(mydata)
 
 
 #Q2. Use pairs() to plot the paired scatter plots and cor() to calculate the paired linear correlation between
 #variables. Report which predictor has the highest linear correlation with medv (Note, use absolute value of
 #the correlation to determine this). Is this correlation a positive or negative correlation?
 
+png("week4/lab2-examples-graphs.png", width=1800, height=1200, res=150)
 # use pairs() and cor()
+pairs(mydata[c("crim", "rm", "lstat", "medv")]) #text.panel = NULL
+cor(mydata)
 
 #Q3. crim is one of the predictors in Boston data. Use medv as response, crim as predictor, conduct a
 #simple linear regression. Report the result and decide if crim is a significant variable that associated with
