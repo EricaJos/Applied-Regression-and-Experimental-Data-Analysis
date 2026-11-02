@@ -1,4 +1,4 @@
-#to Run: Rscript lab1-examples-basics.R
+#to Run: Rscript week2/lab1-examples-basics.R
 # create vector object and name it as x
 x<- c(1, 2, 3, 4, 5)
 x

@@ -1,4 +1,4 @@
-#to Run: Rscript lab1-excercises.R
+#to Run: week2/Rscript lab1-excercises.R
 
 #Q1. Read the data “binary.csv” into R and name it as mydata, view mydata. Use dim() to report the sample
 #size and number of variables. Use head() to check the first 6 lines of the data and report the variable names.

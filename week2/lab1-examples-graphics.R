@@ -1,4 +1,4 @@
-#to Run: Rscript lab1-examples-graphics.R
+#to Run: Rscript week2/lab1-examples-graphics.R
 
 # create vector object and name it as x
 #set random seed equal to 100

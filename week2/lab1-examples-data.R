@@ -1,4 +1,4 @@
-#to Run: Rscript lab1-examples-data.R
+#to Run: Rscript week2/lab1-examples-data.R
 
 #get or set working directory, which is the place to store the data.
 getwd()
